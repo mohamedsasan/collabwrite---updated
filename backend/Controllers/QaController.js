@@ -2,7 +2,7 @@
 const Question = require("../Models/QuestionModel");
 const Answer = require("../Models/AnswerModel");
 
-// ===================== Add Question =====================
+// ================ Add Question =====================
 exports.addQuestion = async (req, res) => {
   try {
     const { question, imageUrl, userId } = req.body;
