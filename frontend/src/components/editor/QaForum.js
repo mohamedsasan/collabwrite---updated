@@ -108,26 +108,11 @@ function Qaheader({ onAddQuestion }) {
             </div>
 
             {/* Search */}
-            <div className="search-section-ultra">
-              <Search className="search-icon-ultra" />
-              <input
-                type="text"
-                placeholder="Search questions, topics, or users..."
-                className="search-input-ultra"
-                // (you can wire this to backend later)
-              />
-              <kbd className="search-kbd">⌘K</kbd>
-            </div>
+            
 
             {/* Actions */}
             <div className="actions-section-ultra">
-              <button className="action-btn-ultra" type="button">
-                <Bell />
-                <span className="notification-dot" />
-              </button>
-              <button className="action-btn-ultra" type="button">
-                <Bookmark />
-              </button>
+             
               <button
                 className="user-avatar-ultra"
                 type="button"
@@ -226,15 +211,7 @@ function Qaheader({ onAddQuestion }) {
                   <span className="posting-name-ultra">
                     {currentUser?.name || "John Doe"}
                   </span>
-                  <button
-                    className="visibility-btn-ultra"
-                    type="button"
-                    // you can extend this to change visibility
-                  >
-                    <Users />
-                    <span>Public</span>
-                    <ChevronDown />
-                  </button>
+                  
                 </div>
               </div>
 
@@ -405,13 +382,13 @@ function Post({ question, onQuestionDeleted }) {
                 background: getAvatarColor(question.user?.name || "User"),
               }}
             >
-              {getInitials(question.user?.name || "Anonymous")}
+              {getInitials(question.user?.name || "user2")}
               <div className="avatar-ring-ultra" />
             </div>
             <div className="post-user-info-ultra">
               <div className="user-name-row-ultra">
                 <h4 className="user-name-ultra">
-                  {question.user?.name || "Anonymous"}
+                  {question.user?.name || "user2"}
                 </h4>
                 <span className="user-badge-ultra">Pro</span>
               </div>
@@ -513,19 +490,7 @@ function Post({ question, onQuestionDeleted }) {
               <MessageCircle />
               <span>Answer</span>
             </button>
-            <button
-              className={`icon-action-ultra ${bookmarked ? "active" : ""}`}
-              onClick={() => setBookmarked(!bookmarked)}
-              type="button"
-            >
-              <Bookmark />
-            </button>
-            <button className="icon-action-ultra" type="button">
-              <Share2 />
-            </button>
-            <button className="icon-action-ultra" type="button">
-              <MoreHorizontal />
-            </button>
+            
           </div>
         </div>
 
