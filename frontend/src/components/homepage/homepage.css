@@ -4,6 +4,94 @@
   box-sizing: border-box;
 }
 
+
+
+
+.home-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Carousel for templates */
+.template-carousel-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.template-carousel {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 25px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: 15px;
+}
+
+.template-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.template-card {
+  flex: 0 0 200px;
+  background: #fff;
+  border: 2px solid #d1e8e2;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  padding: 10px;
+}
+
+.template-card:hover {
+  transform: scale(1.05);
+  background: #d1e8e2;
+}
+
+.template-img img {
+  width: 100%;
+  height: 120px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.template-title {
+  margin-top: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #3c3c3c;
+}
+
+/* Drawer editor from right side */
+.editor-drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  width: 70%;
+  background: #ffffff;
+  border-left: 2px solid #d1e8e2;
+  box-shadow: -6px 0 25px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-close {
+  align-self: flex-end;
+  margin: 10px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+
+
 .header {
   display: flex;
   justify-content: center;

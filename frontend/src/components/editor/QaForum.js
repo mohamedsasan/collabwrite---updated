@@ -1,28 +1,35 @@
 // src/components/editor/QaForum.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import {
-  ArrowUpwardOutlined,
-  ArrowDownwardOutlined,
-  ShareOutlined,
-  MoreHorizOutlined,
-  NotificationsOutlined as NotificationsOutlinedIcon,
-  PeopleAltOutlined as PeopleAltOutlinedIcon,
-  ExpandMore as ExpandMoreIcon,
-  Close as CloseIcon,
-  Delete as DeleteIcon,
-} from "@mui/icons-material";
-import SearchIcon from "@mui/icons-material/Search";
-import { Modal } from "react-responsive-modal";
-import "react-responsive-modal/styles.css";
-import logo from "./logo.png";
+  Search,
+  Bell,
+  Plus,
+  X,
+  Trash2,
+  ThumbsUp,
+  ThumbsDown,
+  Share2,
+  MoreHorizontal,
+  Users,
+  ChevronDown,
+  MessageCircle,
+  Bookmark,
+  Clock,
+  Award,
+  Eye,
+  Send,
+  Image,
+  Link2,
+  CheckCircle,
+  TrendingUp,
+  AlertCircle,
+} from "lucide-react";
 import "./QaForum.css";
 
 const API_BASE = "http://localhost:5000/api/qa";
 
-// helper: get current user from localStorage (expected after login)
+// Helper functions
 const getCurrentUser = () => {
   try {
     const u = JSON.parse(localStorage.getItem("user"));
@@ -32,21 +39,46 @@ const getCurrentUser = () => {
   }
 };
 
-// ===== Qaheader Component =====
+const getInitials = (name) => {
+  if (!name) return "U";
+  const parts = name.trim().split(" ");
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return name.substring(0, 2).toUpperCase();
+};
+
+const getAvatarColor = (name) => {
+  const colors = [
+    "linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)",
+    "linear-gradient(135deg, #f97316 0%, #ec4899 100%)",
+    "linear-gradient(135deg, #0ea5e9 0%, #22c55e 100%)",
+    "linear-gradient(135deg, #6366f1 0%, #ec4899 100%)",
+    "linear-gradient(135deg, #a855f7 0%, #22c55e 100%)",
+    "linear-gradient(135deg, #fb7185 0%, #f97316 100%)",
+  ];
+  const index = name ? name.charCodeAt(0) % colors.length : 0;
+  return colors[index];
+};
+
+// ===== Enhanced Header Component =====
 function Qaheader({ onAddQuestion }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [questionText, setQuestionText] = useState("");
   const [inputUrl, setInputUrl] = useState("");
-
+  const [activeTab, setActiveTab] = useState("question");
   const currentUser = getCurrentUser();
 
   const handleAddQuestion = async () => {
-    if (!questionText.trim()) return alert("Please enter a question");
+    if (!questionText.trim()) {
+      alert("Please enter a question");
+      return;
+    }
 
     try {
       await axios.post(`${API_BASE}/add-question`, {
-        question: questionText,
-        imageUrl: inputUrl,
+        question: questionText.trim(),
+        imageUrl: inputUrl.trim() || null,
         userId: currentUser ? currentUser._id : null,
       });
       onAddQuestion();
@@ -60,120 +92,234 @@ function Qaheader({ onAddQuestion }) {
   };
 
   return (
-    <div className="qHeader">
-      <div className="qHeader-content">
-        <div
-          className="qHeader_logo"
-          style={{ display: "flex", alignItems: "center", gap: "8px" }}
-        >
-          <img src={logo} alt="logo" style={{ height: "40px" }} />
-          <span
-            style={{
-              fontSize: "25px",
-              fontWeight: "600",
-              color: "#ffffffff",
-              letterSpacing: "1px",
-            }}
-          >
-            QaForum
-          </span>
-        </div>
-
-        <div className="qHeader__input">
-          <SearchIcon />
-          <input type="text" placeholder="Search questions" />
-        </div>
-
-        <div className="qHeader_Rem">
-          <Avatar />
-        </div>
-
-        <div className="qHeader__icon">
-          <NotificationsOutlinedIcon />
-        </div>
-
-        <div className="qHeader_button">
-          <Button onClick={() => setIsModalOpen(true)}>Add Question</Button>
-
-          <Modal
-            open={isModalOpen}
-            closeIcon={<CloseIcon />}
-            onClose={() => setIsModalOpen(false)}
-            center
-            styles={{ overlay: { height: "auto" } }}
-          >
-            <div className="modal__title">
-              <h5>Add Question</h5>
-              <h5>Share Link</h5>
-            </div>
-
-            <div className="modal__info">
-              <Avatar className="avatar" />
-              <div className="modal__scope">
-                <PeopleAltOutlinedIcon />
-                <p>Public</p>
-                <ExpandMoreIcon />
+    <>
+      <header className="qa-header-ultra">
+        <div className="header-container-ultra">
+          <div className="header-content-ultra">
+            {/* Logo */}
+            <div className="logo-section-ultra">
+              <div className="logo-icon-ultra">
+                <MessageCircle />
+              </div>
+              <div className="logo-text-ultra">
+                <span className="logo-main">QaForum</span>
+                <span className="logo-sub">COMMUNITY</span>
               </div>
             </div>
 
-            <div className="modal__Field">
+            {/* Search */}
+            <div className="search-section-ultra">
+              <Search className="search-icon-ultra" />
               <input
                 type="text"
-                placeholder="Start your question with 'What', 'Why', 'How', etc..."
-                value={questionText}
-                onChange={(e) => setQuestionText(e.target.value)}
-                style={{
-                  margin: "5px 0",
-                  border: "1px solid lightgray",
-                  padding: "10px",
-                  outline: "none",
-                  width: "100%",
-                  boxSizing: "border-box",
-                }}
+                placeholder="Search questions, topics, or users..."
+                className="search-input-ultra"
+                // (you can wire this to backend later)
               />
-              <div
+              <kbd className="search-kbd">⌘K</kbd>
+            </div>
+
+            {/* Actions */}
+            <div className="actions-section-ultra">
+              <button className="action-btn-ultra" type="button">
+                <Bell />
+                <span className="notification-dot" />
+              </button>
+              <button className="action-btn-ultra" type="button">
+                <Bookmark />
+              </button>
+              <button
+                className="user-avatar-ultra"
+                type="button"
                 style={{
-                  maxWidth: "100%",
-                  display: "flex",
-                  flexDirection: "column",
+                  background: getAvatarColor(currentUser?.name || "User"),
                 }}
               >
+                {currentUser ? getInitials(currentUser.name) : "JD"}
+                <span className="status-dot" />
+              </button>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="ask-btn-ultra"
+                type="button"
+              >
+                <Plus />
+                <span>Ask Question</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Ask Question Modal */}
+      {isModalOpen && (
+        <div
+          className="modal-backdrop-ultra"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="modal-container-ultra"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="modal-header-ultra">
+              <div className="modal-header-content-ultra">
+                <div className="modal-icon-wrapper">
+                  <MessageCircle />
+                </div>
+                <div>
+                  <h2 className="modal-title-ultra">Share Your Question</h2>
+                  <p className="modal-subtitle-ultra">
+                    Describe your problem clearly to get better answers.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="modal-close-ultra"
+                type="button"
+              >
+                <X />
+              </button>
+            </div>
+
+            {/* Modal Tabs */}
+            <div className="modal-tabs-ultra">
+              <button
+                className={`modal-tab-ultra ${
+                  activeTab === "question" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("question")}
+                type="button"
+              >
+                <MessageCircle />
+                <span>Question</span>
+              </button>
+              <button
+                className={`modal-tab-ultra ${
+                  activeTab === "link" ? "active" : ""
+                }`}
+                onClick={() => setActiveTab("link")}
+                type="button"
+              >
+                <Link2 />
+                <span>Share Link</span>
+              </button>
+              <div
+                className="tab-indicator-ultra"
+                style={{ left: activeTab === "question" ? "0" : "50%" }}
+              />
+            </div>
+
+            {/* Modal Body */}
+            <div className="modal-body-ultra">
+              <div className="user-info-ultra">
+                <div
+                  className="posting-avatar-ultra"
+                  style={{
+                    background: getAvatarColor(currentUser?.name || "User"),
+                  }}
+                >
+                  {currentUser ? getInitials(currentUser.name) : "JD"}
+                </div>
+                <div className="posting-details-ultra">
+                  <span className="posting-name-ultra">
+                    {currentUser?.name || "John Doe"}
+                  </span>
+                  <button
+                    className="visibility-btn-ultra"
+                    type="button"
+                    // you can extend this to change visibility
+                  >
+                    <Users />
+                    <span>Public</span>
+                    <ChevronDown />
+                  </button>
+                </div>
+              </div>
+
+              <div className="textarea-wrapper-ultra">
+                <textarea
+                  value={questionText}
+                  onChange={(e) => setQuestionText(e.target.value)}
+                  placeholder="What would you like to know? Include enough detail so others can help..."
+                  className="modal-textarea-ultra"
+                  maxLength={500}
+                />
+                <div className="char-counter-ultra">
+                  {questionText.length} / 500
+                </div>
+              </div>
+
+              <div className="media-section-ultra">
+                <label className="media-label-ultra">
+                  <Image />
+                  <span>Add context (optional)</span>
+                </label>
                 <input
                   type="text"
                   value={inputUrl}
                   onChange={(e) => setInputUrl(e.target.value)}
-                  placeholder="Optional: include an image/link that gives context"
-                  style={{
-                    margin: "5px 0",
-                    border: "1px solid lightgray",
-                    padding: "10px",
-                    outline: "none",
-                    width: "100%",
-                    boxSizing: "border-box",
-                  }}
+                  placeholder={
+                    activeTab === "link"
+                      ? "Paste a reference link or resource URL..."
+                      : "Paste an image URL with code, error screenshots, etc..."
+                  }
+                  className="media-input-ultra"
                 />
                 {inputUrl && (
-                  <img
-                    src={inputUrl}
-                    alt="display"
-                    className="question__imagePreview"
-                  />
+                  <div className="preview-container-ultra">
+                    <img
+                      src={inputUrl}
+                      alt="preview"
+                      className="preview-image-ultra"
+                    />
+                    <button
+                      className="remove-btn-ultra"
+                      onClick={() => setInputUrl("")}
+                      type="button"
+                    >
+                      <X />
+                    </button>
+                  </div>
                 )}
+              </div>
+
+              <div className="tip-card-ultra">
+                <Award className="tip-icon-ultra" />
+                <div>
+                  <h4>Tip: Show what you’ve tried</h4>
+                  <p>
+                    Mention your goal, what you expected, what actually
+                    happened, and any error messages.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="modal__buttons">
-              <button className="cancel" onClick={() => setIsModalOpen(false)}>
+            {/* Modal Footer */}
+            <div className="modal-footer-ultra">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="cancel-btn-ultra"
+                type="button"
+              >
                 Cancel
               </button>
-              <button className="add" onClick={handleAddQuestion}>
-                Add Question
+              <button
+                onClick={handleAddQuestion}
+                disabled={!questionText.trim()}
+                className="submit-btn-ultra"
+                type="button"
+              >
+                <Send />
+                <span>Post Question</span>
               </button>
             </div>
-          </Modal>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 
@@ -182,6 +328,10 @@ function Post({ question, onQuestionDeleted }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [answer, setAnswer] = useState("");
   const [answers, setAnswers] = useState([]);
+  const [showAnswers, setShowAnswers] = useState(false);
+  const [upvoted, setUpvoted] = useState(false);
+  const [downvoted, setDownvoted] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
   const currentUser = getCurrentUser();
 
   const fetchAnswers = async () => {
@@ -194,11 +344,14 @@ function Post({ question, onQuestionDeleted }) {
   };
 
   const handleAddAnswer = async () => {
-    if (!answer.trim()) return alert("Please enter an answer");
+    if (!answer.trim()) {
+      alert("Please enter an answer");
+      return;
+    }
     try {
       await axios.post(`${API_BASE}/add-answer`, {
         questionId: question._id,
-        answer,
+        answer: answer.trim(),
         userId: currentUser ? currentUser._id : null,
       });
       setAnswer("");
@@ -237,200 +390,429 @@ function Post({ question, onQuestionDeleted }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // simple example tags (you can wire real tags from backend later)
+  const sampleTags = ["React", "Help"];
+
   return (
-    <div className="post" style={{ marginBottom: 20 }}>
-      <div
-        className="post__info"
-        style={{ display: "flex", alignItems: "center", gap: 10 }}
-      >
-        <Avatar />
-        <div>
-          <h4 style={{ margin: 0 }}>{question.user?.name || "Anonymous"}</h4>
-          <small style={{ color: "#666" }}>
-            {new Date(question.createdAt).toLocaleString()}
-          </small>
-        </div>
-        <div style={{ marginLeft: "auto" }}>
-          <Button
-            onClick={handleDeleteQuestion}
-            title="Delete question"
-            startIcon={<DeleteIcon />}
-          >
-            Delete
-          </Button>
-        </div>
-      </div>
-
-      <div className="post__body">
-        <p>{question.question}</p>
-        {question.imageUrl && (
-          <img
-            src={question.imageUrl}
-            alt="context"
-            className="question__imageDisplay"
-          />
-        )}
-
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="post__btnAnswer"
-        >
-          Answer
-        </button>
-
-        <Modal
-          open={isModalOpen}
-          closeIcon={<CloseIcon />}
-          onClose={() => setIsModalOpen(false)}
-          center
-          styles={{ overlay: { height: "auto" } }}
-        >
-          <div className="modal__question">
-            <h1>{question.question}</h1>
-            <p>
-              asked by <strong>{question.user?.name || "User"}</strong>
-            </p>
-          </div>
-
-          <div className="modal__answer">
-            <textarea
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              placeholder="Enter your Answer"
-              style={{
-                width: "100%",
-                minHeight: 150,
-                padding: 10,
-                fontSize: 16,
-                borderRadius: 4,
-                border: "1px solid lightgray",
-              }}
-            />
-          </div>
-
-          <div className="modal__buttons">
-            <button className="cancel" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </button>
-            <button
-              className="add"
-              onClick={handleAddAnswer}
-              disabled={!answer.trim()}
-            >
-              Add Answer
-            </button>
-          </div>
-        </Modal>
-      </div>
-
-      <div className="post__footer" style={{ marginTop: 10 }}>
-        <div style={{ display: "flex", gap: 8 }}>
-          <ArrowUpwardOutlined />
-          <ArrowDownwardOutlined />
-        </div>
-        <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-          <ShareOutlined />
-          <MoreHorizOutlined />
-        </div>
-      </div>
-
-      <div style={{ marginTop: 12 }}>
-        <p
-          style={{
-            color: "rgba(0,0,0,0.5)",
-            fontSize: 12,
-            fontWeight: 600,
-          }}
-        >
-          {answers.length} Answer(s)
-        </p>
-
-        {answers.map((ans) => (
-          <div
-            key={ans._id}
-            style={{ borderTop: "1px solid lightgray", padding: 10 }}
-          >
+    <>
+      <article className="post-card-ultra">
+        {/* Post Header */}
+        <div className="post-header-ultra">
+          <div className="post-user-ultra">
             <div
+              className="post-avatar-main-ultra"
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
+                background: getAvatarColor(question.user?.name || "User"),
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <Avatar />
-                <div>
-                  <p style={{ margin: 0 }}>{ans.user?.name || "User"}</p>
-                  <small style={{ color: "#666" }}>
-                    {new Date(ans.createdAt).toLocaleString()}
-                  </small>
-                </div>
+              {getInitials(question.user?.name || "Anonymous")}
+              <div className="avatar-ring-ultra" />
+            </div>
+            <div className="post-user-info-ultra">
+              <div className="user-name-row-ultra">
+                <h4 className="user-name-ultra">
+                  {question.user?.name || "Anonymous"}
+                </h4>
+                <span className="user-badge-ultra">Pro</span>
               </div>
-              <div>
-                <Button
-                  onClick={() => handleDeleteAnswer(ans._id)}
-                  title="Delete answer"
-                  startIcon={<DeleteIcon />}
-                >
-                  Delete
-                </Button>
+              <div className="post-meta-ultra">
+                <Clock className="meta-icon-ultra" />
+                <span>
+                  {new Date(question.createdAt).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+                <span className="separator">•</span>
+                <Eye className="meta-icon-ultra" />
+                <span>234 views</span>
               </div>
             </div>
-            <div style={{ marginTop: 8 }}>{ans.answer}</div>
           </div>
-        ))}
-      </div>
-    </div>
+          <button
+            onClick={handleDeleteQuestion}
+            className="delete-btn-ultra"
+            type="button"
+          >
+            <Trash2 />
+          </button>
+        </div>
+
+        {/* Post Body */}
+        <div className="post-body-ultra">
+          <h3 className="post-question-ultra">{question.question}</h3>
+          <div className="post-tags-row-ultra">
+            {sampleTags.map((t) => (
+              <span key={t} className="post-tag-chip-ultra">
+                {t}
+              </span>
+            ))}
+          </div>
+          {question.imageUrl && (
+            <div className="post-image-wrapper-ultra">
+              <img
+                src={question.imageUrl}
+                alt="context"
+                className="post-image-ultra"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Post Stats */}
+        <div className="post-stats-ultra">
+          <div className="stat-chip-ultra">
+            <ThumbsUp />
+            <span>12 upvotes</span>
+          </div>
+          <div className="stat-chip-ultra">
+            <MessageCircle />
+            <span>{answers.length} answers</span>
+          </div>
+          {answers.length > 0 && (
+            <div className="stat-chip-ultra solved">
+              <CheckCircle />
+              <span>Answered</span>
+            </div>
+          )}
+        </div>
+
+        {/* Post Actions */}
+        <div className="post-actions-ultra">
+          <div className="actions-left-ultra">
+            <button
+              className={`vote-btn-ultra ${upvoted ? "active" : ""}`}
+              onClick={() => {
+                setUpvoted(!upvoted);
+                if (!upvoted && downvoted) setDownvoted(false);
+              }}
+              type="button"
+            >
+              <ThumbsUp />
+              <span>Upvote</span>
+            </button>
+            <button
+              className={`vote-btn-ultra ${downvoted ? "active" : ""}`}
+              onClick={() => {
+                setDownvoted(!downvoted);
+                if (!downvoted && upvoted) setUpvoted(false);
+              }}
+              type="button"
+            >
+              <ThumbsDown />
+            </button>
+          </div>
+          <div className="actions-right-ultra">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="answer-btn-ultra"
+              type="button"
+            >
+              <MessageCircle />
+              <span>Answer</span>
+            </button>
+            <button
+              className={`icon-action-ultra ${bookmarked ? "active" : ""}`}
+              onClick={() => setBookmarked(!bookmarked)}
+              type="button"
+            >
+              <Bookmark />
+            </button>
+            <button className="icon-action-ultra" type="button">
+              <Share2 />
+            </button>
+            <button className="icon-action-ultra" type="button">
+              <MoreHorizontal />
+            </button>
+          </div>
+        </div>
+
+        {/* Answers */}
+        {answers.length > 0 && (
+          <div className="answers-section-ultra">
+            <button
+              onClick={() => setShowAnswers(!showAnswers)}
+              className="answers-toggle-ultra"
+              type="button"
+            >
+              <span>
+                {answers.length} Answer{answers.length !== 1 ? "s" : ""}
+              </span>
+              <ChevronDown className={showAnswers ? "rotated" : ""} />
+            </button>
+            {showAnswers && (
+              <div className="answers-list-ultra">
+                {answers.map((ans) => (
+                  <div key={ans._id} className="answer-item-ultra">
+                    <div className="answer-header-ultra">
+                      <div className="answer-user-ultra">
+                        <div
+                          className="answer-avatar-ultra"
+                          style={{
+                            background: getAvatarColor(
+                              ans.user?.name || "User"
+                            ),
+                          }}
+                        >
+                          {getInitials(ans.user?.name || "User")}
+                        </div>
+                        <div className="answer-user-info-ultra">
+                          <h5>{ans.user?.name || "User"}</h5>
+                          <span>
+                            {new Date(ans.createdAt).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              }
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteAnswer(ans._id)}
+                        className="answer-delete-ultra"
+                        type="button"
+                      >
+                        <Trash2 />
+                      </button>
+                    </div>
+                    <p className="answer-text-ultra">{ans.answer}</p>
+                    <div className="answer-actions-ultra">
+                      <button
+                        className="answer-vote-ultra"
+                        type="button"
+                      >
+                        <ThumbsUp />
+                        <span>8</span>
+                      </button>
+                      <button
+                        className="answer-vote-ultra"
+                        type="button"
+                      >
+                        <ThumbsDown />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </article>
+
+      {/* Answer Modal */}
+      {isModalOpen && (
+        <div
+          className="modal-backdrop-ultra"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="answer-modal-ultra"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="answer-modal-header-ultra">
+              <div>
+                <h3 className="answer-modal-title-ultra">
+                  {question.question}
+                </h3>
+                <p className="answer-modal-subtitle-ultra">
+                  Asked by <strong>{question.user?.name || "User"}</strong>
+                </p>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="modal-close-ultra"
+                type="button"
+              >
+                <X />
+              </button>
+            </div>
+            <div className="answer-modal-body-ultra">
+              <textarea
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                placeholder="Write your answer here..."
+                className="answer-textarea-ultra"
+              />
+            </div>
+            <div className="answer-modal-footer-ultra">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="cancel-btn-ultra"
+                type="button"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddAnswer}
+                disabled={!answer.trim()}
+                className="submit-btn-ultra"
+                type="button"
+              >
+                <Send />
+                <span>Post Answer</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
 // ===== Feed Component =====
 function Feed({ refreshKey, onQuestionDeleted }) {
   const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState("recent");
+  const [sortBy, setSortBy] = useState("newest");
 
   const fetchQuestions = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(`${API_BASE}/get-questions`);
-      setQuestions(res.data || []);
+      let data = res.data || [];
+
+      // simple client-side sort placeholder (you can replace with backend filters)
+      if (sortBy === "newest") {
+        data = data.slice().sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+      } else if (sortBy === "oldest") {
+        data = data.slice().sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        );
+      }
+
+      setQuestions(data);
     } catch (error) {
       console.error("Error fetching questions:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchQuestions();
-  }, [refreshKey]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshKey, sortBy]);
+
+  const totalQuestions = questions.length;
+
+  if (loading) {
+    return (
+      <div className="feed-wrapper-ultra">
+        <div className="loading-container-ultra">
+          <div className="spinner-ultra" />
+          <p>Loading questions...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="feed">
-      {questions.length === 0 ? (
-        <p>No questions yet.</p>
-      ) : (
-        questions.map((q) => (
-          <Post
-            key={q._id}
-            question={q}
-            onQuestionDeleted={onQuestionDeleted}
-          />
-        ))
-      )}
+    <div className="feed-wrapper-ultra">
+      {/* Feed Toolbar */}
+      <div className="feed-header-ultra">
+        <div className="feed-title-group-ultra">
+          <h2 className="feed-title-ultra">Community Questions</h2>
+          <p className="feed-subtitle-ultra">
+            {totalQuestions === 0
+              ? "No questions yet — be the first to ask!"
+              : `${totalQuestions} question${
+                  totalQuestions !== 1 ? "s" : ""
+                } in the feed`}
+          </p>
+        </div>
+        <div className="feed-controls-ultra">
+          <button
+            type="button"
+            className={`filter-pill-ultra ${
+              activeFilter === "recent" ? "active" : ""
+            }`}
+            onClick={() => setActiveFilter("recent")}
+            // currently visual only, can wire to backend later
+          >
+            <span>
+              <Clock />
+              Recent
+            </span>
+          </button>
+          <button
+            type="button"
+            className={`filter-pill-ultra ${
+              activeFilter === "trending" ? "active" : ""
+            }`}
+            onClick={() => setActiveFilter("trending")}
+          >
+            <span>
+              <TrendingUp />
+              Trending
+            </span>
+          </button>
+          <button
+            type="button"
+            className={`filter-pill-ultra ${
+              activeFilter === "unanswered" ? "active" : ""
+            }`}
+            onClick={() => setActiveFilter("unanswered")}
+          >
+            <span>
+              <AlertCircle />
+              Unanswered
+            </span>
+          </button>
+
+          <select
+            className="sort-select-ultra"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="newest">Sort: Newest</option>
+            <option value="oldest">Sort: Oldest</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Feed */}
+      <div className="feed-ultra">
+        {questions.length === 0 ? (
+          <div className="empty-state-ultra">
+            <MessageCircle className="empty-icon-ultra" />
+            <h3>No questions yet</h3>
+            <p>Be the first to ask a question and start the conversation.</p>
+          </div>
+        ) : (
+          questions.map((q) => (
+            <Post
+              key={q._id}
+              question={q}
+              onQuestionDeleted={onQuestionDeleted}
+            />
+          ))
+        )}
+      </div>
     </div>
   );
 }
 
-// ===== Main Qa Component =====
+// ===== Main Component =====
 function Qa() {
   const [refreshKey, setRefreshKey] = useState(0);
-
   const handleRefresh = () => setRefreshKey((k) => k + 1);
 
   return (
-    <div className="Qa">
+    <div className="qa-app-ultra">
       <Qaheader onAddQuestion={handleRefresh} />
-      <div className="qa_contents">
-        <div className="qa_content">
+      <div className="qa-main-ultra">
+        <main className="qa-content-ultra">
           <Feed refreshKey={refreshKey} onQuestionDeleted={handleRefresh} />
-        </div>
+        </main>
       </div>
     </div>
   );

@@ -27,6 +27,7 @@ function App() {
       <Route path="/homepage" element={<Homepage />} />
       <Route path="/settings" element={<Settings />} />
       <Route path="/forgotpasswordpage" element={<ForgotPasswordPage />} />
+       <Route path="/editor" element={<TextEditor />} />
 
 
       {/* Redirect to a random document */}

@@ -9,15 +9,15 @@ require("dotenv").config();
 const addUser = async (req, res, next) => {
     const { name, email, password } = req.body;
 
-    try {
+try {
         // Step 1: Validate password before saving
-        const passwordRegex = /^(?=.[A-Z])(?=.\d)[A-Za-z\d]{5,8}$/;
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,}$/;
         if (!passwordRegex.test(password)) {
             return res.status(400).json({
                 message:
-                    "Password must contain at least 1 UPPERCASE, 1 number, and be between 5 - 8 characters",
-            });
-        }
+                    "Password must contain at least 1 UPPERCASE, 1 number, and more than 5 characters",
+            });
+        }
 
         // Step 2: Check if email already exists
         const existingUser = await User.findOne({ email });
@@ -200,7 +200,7 @@ const sendOtp = async (req, res) => {
             from: "no-reply@collabwrite.com",
             to: email,
             subject: "Your OTP Code for Password Reset",
-            text: `Your OTP is ${otp}. It expires in 10 minutes.`
+            text: `Your OTP is: ${otp}`
         };
 
         await transporter.sendMail(mailOptions);
