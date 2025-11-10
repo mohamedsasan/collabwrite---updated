@@ -1,7 +1,137 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "./forgotpasswordpage.css";
+
+// ✅ Inline CSS styles (merged from forgotpasswordpage.css)
+const styles = `
+/* --- Overall Container --- */
+.forgot-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f4f6f8;
+  text-align: center;
+}
+
+/* --- Forgot Box --- */
+.forgot-box {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+}
+
+.forgot-box h2 {
+  color: #1a237e;
+  margin-bottom: 30px;
+}
+
+/* --- Step Group Styling --- */
+.step-group {
+  margin-bottom: 30px;
+  padding: 10px 0;
+}
+
+.step-label {
+  display: block;
+  text-align: left;
+  font-weight: bold;
+  font-size: 1.1em;
+  color: #3949ab;
+  margin-bottom: 15px;
+}
+
+/* --- Input Forms --- */
+.email-form,
+.reset-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: left;
+}
+
+.forgot-box input {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.forgot-box input:focus {
+  border-color: #3949ab;
+  outline: none;
+}
+
+/* --- Buttons --- */
+.forgot-box button {
+  padding: 12px;
+  font-size: 16px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.send-otp-btn {
+  background-color: #1a237e;
+}
+
+.send-otp-btn:hover {
+  background-color: #303f9f;
+}
+
+.reset-password-btn {
+  background-color: #00897b;
+}
+
+.reset-password-btn:hover {
+  background-color: #00a896;
+}
+
+/* --- Separator Line --- */
+hr {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
+  margin: 30px 0;
+}
+
+/* --- Disabled State --- */
+.disabled-step input,
+.disabled-step button {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.forgot-box input:disabled {
+  background-color: #f0f0f0;
+}
+
+/* --- Message Styling --- */
+.message {
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  color: #d32f2f;
+  background-color: #ffebee;
+  font-weight: bold;
+  display: block;
+  text-align: center;
+}
+
+.message.success {
+  color: #388e3c;
+  background-color: #e8f5e9;
+}
+`;
 
 function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -13,7 +143,17 @@ function ForgotPasswordPage() {
 
   const navigate = useNavigate();
 
-  // Auto-navigate after success (2 seconds delay)
+  // ✅ Inject CSS dynamically
+  useEffect(() => {
+    const styleTag = document.createElement("style");
+    styleTag.innerHTML = styles;
+    document.head.appendChild(styleTag);
+    return () => {
+      document.head.removeChild(styleTag);
+    };
+  }, []);
+
+  // ✅ Auto-navigate after success (2s delay)
   useEffect(() => {
     if (step === 3) {
       const timer = setTimeout(() => {
@@ -23,6 +163,7 @@ function ForgotPasswordPage() {
     }
   }, [step, navigate]);
 
+  // ✅ Send OTP
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -31,7 +172,6 @@ function ForgotPasswordPage() {
         setMessage("Please enter your registered email.");
         return;
       }
-
       const res = await axios.post("http://localhost:5000/users/send-otp", { email });
       setMessage(res.data.message);
       setStep(2);
@@ -40,6 +180,7 @@ function ForgotPasswordPage() {
     }
   };
 
+  // ✅ Reset Password
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setMessage("");
