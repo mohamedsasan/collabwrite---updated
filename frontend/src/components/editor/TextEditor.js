@@ -894,6 +894,10 @@ useEffect(() => {
           </div>
         )}
 
+
+
+        
+
         {/* Chat Sidebar - Slide from right */}
         <div className={`chat-sidebar ${showChat ? "chat-open" : ""}`}>
           {showChat && currentUser && <Chat roomId={documentId} user={currentUser} socket={socket.current} />}

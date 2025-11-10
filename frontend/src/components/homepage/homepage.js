@@ -14,7 +14,7 @@ function Homepage() {
 
   // Templates with file names
   const templates = [
-    { title: "Blank Document", image: "/homepage/Blank document.png", file: "blank.html" },
+    { title: "Blank Document", image: "/homepage/Blank document.png",  },
     { title: "Project Proposal", image: "/homepage/Resume.png", file: "proposal.html" },
     { title: "Resume", image: "/homepage/Project Proposal.png", file: "resume.html" },
     { title: "Cover Letter", image: "/homepage/Cover letter.png", file: "coverletter.html" },

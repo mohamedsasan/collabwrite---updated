@@ -871,6 +871,32 @@ html {
   }
 }
 
+.signup {
+  background: #4e80ec;
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 548;
+  border: 2px solid #4e80ec;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  margin-left: 12px; /* space between login and signup */
+}
+
+.signup:hover {
+  background: #004cff;
+  color: #ffffff;
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+  border-color: #004cff;
+}
+
+@media (min-width: 768px) {
+  .signup {
+    display: inline-block;
+  }
+}
+
 
 
 

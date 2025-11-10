@@ -4,7 +4,10 @@ const router = express.Router();
 const Share = require('../Models/Share');
 const Document = require('../Models/Document');
 const crypto = require('crypto');
-const authMiddleware = require('../Middleware/auth'); // ✅ IMPORT CORRECT AUTH MIDDLEWARE
+const authMiddleware = require('../Middleware/auth');
+require('dotenv').config(); 
+
+console.log("✅ ShareRoutes loaded");// ✅ IMPORT CORRECT AUTH MIDDLEWARE
 
 // ====== UTILITY FUNCTIONS ======
 
@@ -110,6 +113,8 @@ router.post('/api/documents/:documentId/share', authMiddleware, async (req, res)
     });
 
     await newShare.save();
+
+    
 
     // Step 5: Update document's shared status
     if (!document.isShared) {
@@ -367,6 +372,7 @@ router.delete('/api/documents/:documentId/share/:shareId', authMiddleware, async
       error: 'Failed to revoke share: ' + error.message
     });
   }
+  
 });
 
 module.exports = router;

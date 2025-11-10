@@ -7,8 +7,9 @@ const socketIo = require("socket.io");
 require("dotenv").config();
 
 const QaRoutes = require("./Routes/QaRoutes"); // Q&A Forum API routes
-
 const userRouter = require("./Routes/UserRoutes");
+const ShareRoutes = require("./Routes/ShareRoutes");
+
 require("./Models/UserModels");
 require("./Models/Document");
 
@@ -29,7 +30,8 @@ app.use(express.json());
 
 //Routes
 app.use("/users", userRouter);
-app.use("/api/qa", QaRoutes); // Q&A Forum API
+app.use("/api/qa", QaRoutes);
+app.use("/api", ShareRoutes); // Q&A Forum API
 
 //Register
 const User = mongoose.model("register");

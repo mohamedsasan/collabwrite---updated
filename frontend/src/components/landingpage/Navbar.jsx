@@ -15,7 +15,7 @@ const Navbar = () => {
     { href: "#testimonials", label: "Our Team" },
   ];
 
-  // ✅ 1. Detect scroll position for background change
+  // ✅ Detect scroll position for background change
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -24,10 +24,9 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // ✅ 2. Update active link while scrolling through sections
+  // ✅ Update active link while scrolling
   useEffect(() => {
     const sections = document.querySelectorAll('section[id]');
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -49,7 +48,7 @@ const Navbar = () => {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true }}
-      className={`navbar ${scrolled ? 'scrolled' : ''}`}  // ✅ add scroll styling
+      className={`navbar ${scrolled ? 'scrolled' : ''}`}
     >
       <div className="navbar-container">
         {/* Logo */}
@@ -80,15 +79,27 @@ const Navbar = () => {
           ))}
         </motion.div>
 
-        {/* Sign-In, Sign-Up Button */}
-        <motion.button
+        {/* Log In & Sign Up Buttons */}
+        <motion.div
+          className="auth-buttons"
           variants={fadeIn('left', 0.3)}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="signin"
         >
-          <Link to='/loginpage'>Log In</Link>
-        </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="signin"
+          >
+            <Link to='/loginpage'>Log In</Link>
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="signup"
+          >
+            <Link to='/signuppage'>Sign Up</Link>
+          </motion.button>
+        </motion.div>
       </div>
     </motion.nav>
   );

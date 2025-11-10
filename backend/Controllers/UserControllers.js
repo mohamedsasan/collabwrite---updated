@@ -186,16 +186,28 @@ const sendOtp = async (req, res) => {
         user.otpExpiry = Date.now() + 10 * 60 * 1000;
         await user.save();
 
-        // Mailtrap SMTP transporter
-        const transporter = nodemailer.createTransport({
-            host: process.env.MAILTRAP_HOST,
-            port: process.env.MAILTRAP_PORT,
-            auth: {
-                user: process.env.MAILTRAP_USER,
-                pass: process.env.MAILTRAP_PASS
-            }
-        });
+        // // Mailtrap SMTP transporter
+        // const transporter = nodemailer.createTransport({
+        //     host: process.env.MAILTRAP_HOST,
+        //     port: process.env.MAILTRAP_PORT,
+        //     auth: {
+        //         user: process.env.MAILTRAP_USER,
+        //         pass: process.env.MAILTRAP_PASS
+        //     }
+        // });
 
+       
+       // nodemailer SMTP transporter
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS
+            }
+        });
+       
+       
+       
         const mailOptions = {
             from: "no-reply@collabwrite.com",
             to: email,
