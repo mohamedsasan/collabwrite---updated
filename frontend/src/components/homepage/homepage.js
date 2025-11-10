@@ -1,6 +1,8 @@
+// homepage.js
 import React, { useState, useEffect } from "react";
 import "./homepage.css";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidV4 } from "uuid"; // NEW: generate unique IDs for blank docs
 
 function Homepage() {
   const navigate = useNavigate();
@@ -9,18 +11,25 @@ function Homepage() {
 
   // Navigate to editor with selected template
   const handleTemplateClick = (templateFile) => {
-    navigate(`/editor?template=${encodeURIComponent(templateFile)}`);
+    if (templateFile) {
+      // If a template file exists, load it in the editor
+      navigate(`/editor?template=${encodeURIComponent(templateFile)}`);
+    } else {
+      // If no template file (like Blank Document), create a new unique document ID
+      // and navigate to the shared document route so it matches share links.
+      const newDocId = uuidV4();
+      navigate(`/documents/${newDocId}`);
+    }
   };
 
   // Templates with file names
   const templates = [
-    { title: "Blank Document", image: "/homepage/Blank document.png",  },
-    { title: "Project Proposal", image: "/homepage/Resume.png", file: "proposal.html" },
-    { title: "Resume", image: "/homepage/Project Proposal.png", file: "resume.html" },
+    { title: "Blank Document", image: "/homepage/Blank document.png" },
+    { title: "Project Proposal", image: "/homepage/Project Proposal.png", file: "proposal.html" },
+    { title: "Resume", image: "/homepage/Resume.png", file: "resume.html" },
     { title: "Cover Letter", image: "/homepage/Cover letter.png", file: "coverletter.html" },
     { title: "Student Report", image: "/homepage/Student report.png", file: "report.html" },
   ];
-
   const recents = [
     { title: "CV", image: "/homepage/CV.png" },
     { title: "JAAAI", image: "/homepage/Jaaai.png" },
@@ -67,6 +76,7 @@ function Homepage() {
     }, 3000);
 
     return () => clearTimeout(fallbackTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
