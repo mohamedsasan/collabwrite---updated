@@ -555,7 +555,7 @@ const Chat = ({ roomId, user, socket }) => {
             fontSize: '14px', 
             marginTop: '20px',
             padding: '20px',
-            backgroundColor: '#f9fafb',
+            backgroundColor: '#1e2730ff',
             borderRadius: '12px',
             border: '1px dashed #d1d5db'
           }}>

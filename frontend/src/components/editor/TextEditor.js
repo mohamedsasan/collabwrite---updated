@@ -86,7 +86,7 @@ const dropdowns = {
     { label: "Fullscreen", action: "fullscreen" },
     { label: "Zoom In", action: "zoom-in" },
     { label: "Zoom Out", action: "zoom-out" },
-    { label: "Dark Mode", action: "dark-mode" },
+   
   ],
 };
 
@@ -453,22 +453,22 @@ useEffect(() => {
       case "insert-table": {
         const range = quill.getSelection(true);
         const tableHTML = `
-    <table style="width:80%, hight:40%; border-collapse: collapse;">
+    <table style="width:40%, hight:40%; border-collapse: collapse;">
       <tr>
-        <th style="border:2px solid #141313ff; padding:16px;">Heading</th>
-        <th style="border:2px solid #040404ff; padding:16px;">Heading</th>
+        <th style="border:2px solid #141313ff; padding:8px;"></th>
+        <th style="border:2px solid #040404ff; padding:8px;"></th>
       </tr>
       <tr>
-        <td style="border:2px solid #090808ff; padding:8px;">Data</td>
-        <td style="border:2px solid #161515ff; padding:8px;">Data</td>
+        <td style="border:2px solid #090808ff; padding:8px;"></td>
+        <td style="border:2px solid #161515ff; padding:8px;"></td>
       </tr>
        <tr>
-        <td style="border:2px solid #000000ff; padding:8px;">Data</td>
-        <td style="border:2px solid #020202ff; padding:8px;">Data</td>
+        <td style="border:2px solid #000000ff; padding:8px;"></td>
+        <td style="border:2px solid #020202ff; padding:8px;"></td>
       </tr>
        <tr>
-        <td style="border:2px solid #060505ff; padding:8px;">Data</td>
-        <td style="border:2px solid #161515ff; padding:8px;">Data</td>
+        <td style="border:2px solid #060505ff; padding:8px;"></td>
+        <td style="border:2px solid #161515ff; padding:8px;"></td>
       </tr>
     </table><br/>
   `;
@@ -845,7 +845,7 @@ useEffect(() => {
             )}
           </div>
 
-          <button className="action-btn">👥 Participate</button>
+     {/*    <button className="action-btn">👥 Participate</button>*/} 
           <button
             className="action-btn settings-btn"
             onClick={() => setShowSettings(!showSettings)}

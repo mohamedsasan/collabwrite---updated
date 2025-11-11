@@ -51,10 +51,10 @@ export default function Settings({ show, onClose }) {
           <span>Profile Settings</span>
         </div>
 
-        <div className="setting-item">
+    { /*   <div className="setting-item">
           <img src="/changepassword.png" className="setting-icon" alt="password" />
           <span>Change Password</span>
-        </div>
+        </div>*/}
 
         <div className="setting-item">
            <div style={{ marginBottom: "10px" }}>
