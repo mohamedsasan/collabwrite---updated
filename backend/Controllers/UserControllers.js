@@ -1,23 +1,24 @@
 const User = require("../Models/UserModels");
 const bcrypt = require("bcryptjs");
-
 require("dotenv").config();
-
+const { OAuth2Client } = require("google-auth-library");
+const jwt = require("jsonwebtoken");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 
 
 const addUser = async (req, res, next) => {
     const { name, email, password } = req.body;
 
-try {
+    try {
         // Step 1: Validate password before saving
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{5,}$/;
         if (!passwordRegex.test(password)) {
             return res.status(400).json({
                 message:
                     "Password must contain at least 1 UPPERCASE, 1 number, and more than 5 characters",
-            });
-        }
+            });
+        }
 
         // Step 2: Check if email already exists
         const existingUser = await User.findOne({ email });
@@ -152,6 +153,8 @@ const loginUser = async (req, res, next) => {
         // Exclude password before sending back user info
         const { password: _, ...safeUser } = user._doc;
 
+         // Save user name to LoggedInUser collection
+
         res.status(200).json({
             message: "Login successful!",
             user: safeUser
@@ -162,6 +165,47 @@ const loginUser = async (req, res, next) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
+
+
+const googleLogin = async (req, res) => {
+    const { token } = req.body;
+
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID
+        });
+
+        const payload = ticket.getPayload();
+        const { sub, email, name, picture } = payload;
+
+        // Check if user exists
+        let user = await User.findOne({ email });
+        if (!user) {
+            // If not, create new user
+            user = await User.create({
+                googleId: sub,
+                name,
+                email,
+                password: sub + process.env.JWT_SECRET, // dummy password
+                picture
+            });
+        }
+
+        // Generate JWT for your app
+        const myToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+
+
+        res.status(200).json({ user, token: myToken });
+
+    } catch (err) {
+        console.error(err);
+        res.status(400).json({ message: "Invalid Google token" });
+    }
+};
+
 
 
 
@@ -186,7 +230,9 @@ const sendOtp = async (req, res) => {
         user.otpExpiry = Date.now() + 10 * 60 * 1000;
         await user.save();
 
-        // // Mailtrap SMTP transporter
+
+
+        // Mailtrap SMTP transporter
         // const transporter = nodemailer.createTransport({
         //     host: process.env.MAILTRAP_HOST,
         //     port: process.env.MAILTRAP_PORT,
@@ -196,18 +242,20 @@ const sendOtp = async (req, res) => {
         //     }
         // });
 
-       
-       // nodemailer SMTP transporter
+
+
+        // nodemailer SMTP transporter
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
                 user: process.env.MAIL_USER,
                 pass: process.env.MAIL_PASS
-            }
-        });
-       
-       
-       
+            }
+        });
+
+
+
+
         const mailOptions = {
             from: "no-reply@collabwrite.com",
             to: email,
@@ -217,13 +265,12 @@ const sendOtp = async (req, res) => {
 
         await transporter.sendMail(mailOptions);
 
-        return res.status(200).json({ message: "OTP sent successfully to your email (check Mailtrap inbox)" });
+        return res.status(200).json({ message: "An OTP has sent to your email" });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Server error sending OTP" });
     }
 };
-
 
 
 
@@ -262,3 +309,4 @@ exports.deleteUser = deleteUser;
 exports.loginUser = loginUser;
 exports.sendOtp = sendOtp;
 exports.resetPassword = resetPassword;
+exports.googleLogin = googleLogin;
